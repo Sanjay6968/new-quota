@@ -1,3 +1,12 @@
+import Image from 'next/image';
+
 export default function UploadIllustration() {
-  return <img src="/upload-illustration.svg" alt="Upload Illustration" />;
+  return (
+    <Image
+      src="/upload-illustration.svg"
+      alt="Upload Illustration"
+      width={665}
+      height={968}
+    />
+  );
 }
