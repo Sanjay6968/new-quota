@@ -1,8 +1,9 @@
-import { Highlight, Language, PrismTheme } from 'prism-react-renderer';
 import React from 'react';
 import styled from 'styled-components';
-import ClientOnly from '@/components/ClientOnly';
+import Highlight, { defaultProps, Language, PrismTheme } from 'prism-react-renderer';
+import dracula from 'prism-react-renderer/themes/dracula';
 import { useClipboard } from '@/hooks/useClipboard';
+import ClientOnly from '@/components/ClientOnly';
 
 export interface CodeProps {
   code: string;
@@ -13,15 +14,10 @@ export interface CodeProps {
   caption?: string;
 }
 
-import { LineOutputProps, RenderProps } from 'prism-react-renderer';
-
-interface LineProps extends LineOutputProps {
+interface ExtendedLineProps {
   key: React.Key;
-}
-
-interface TokenProps {
-  token: any;
-  key: React.Key;
+  className?: string;
+  children: React.ReactNode;
 }
 
 export default function Code({
@@ -32,60 +28,46 @@ export default function Code({
   withLineNumbers,
   caption,
 }: CodeProps) {
-  const { copy, copied } = useClipboard({
-    copiedTimeout: 600,
-  });
-
-  function handleCopyClick(code: string) {
-    copy(code);
-  }
+  const { copy, copied } = useClipboard({ copiedTimeout: 600 });
 
   const copyButtonMarkup = (
     <ClientOnly>
-      <CopyButton copied={copied} onClick={() => handleCopyClick(code)}>
+      <CopyButton copied={copied} onClick={() => copy(code)}>
         <CopyIcon />
       </CopyButton>
     </ClientOnly>
   );
 
   return (
-    <>
-      <Highlight theme={undefined as unknown as PrismTheme} code={code} language={language}>
-        {({
-          className,
-          style,
-          tokens,
-          getLineProps,
-          getTokenProps,
-        }: RenderProps) => (
-          <>
-            <CodeWrapper className="code-wrapper" language={language}>
-              {withCopyButton && copyButtonMarkup}
-              <Pre className={className} style={style}>
-                {tokens.map((line: any, i: number) => {
-                  const lineNumber = i + 1;
-                  const isSelected = selectedLines.includes(lineNumber);
-                  const lineProps: LineProps = { ...getLineProps({ line }), key: lineNumber };
-                  const className = lineProps.className + (isSelected ? ' selected-line' : '');
+    <Highlight {...defaultProps} theme={dracula as PrismTheme} code={code} language={language}>
+      {({ className, style, tokens, getLineProps, getTokenProps }) => (
+        <>
+          <CodeWrapper className="code-wrapper" language={language}>
+            {withCopyButton && copyButtonMarkup}
+            <Pre className={className} style={style}>
+              {tokens.map((line, i) => {
+                const lineNumber = i + 1;
+                const isSelected = selectedLines.includes(lineNumber);
+                const lineProps = getLineProps({ line }) as ExtendedLineProps;
+                const lineClass = (lineProps.className || '') + (isSelected ? ' selected-line' : '');
 
-                  return (
-                    <Line {...lineProps} className={className} key={lineNumber}>
-                      {withLineNumbers && <LineNo>{lineNumber}</LineNo>}
-                      <LineContent>
-                        {line.map((token: any, key: React.Key) => (
-                          <span {...getTokenProps({ token })} key={key} />
-                        ))}
-                      </LineContent>
-                    </Line>
-                  );
-                })}
-              </Pre>
-            </CodeWrapper>
-            {caption && <Caption>{caption}</Caption>}
-          </>
-        )}
-      </Highlight>
-    </>
+                return (
+                  <Line {...lineProps} className={lineClass} key={lineNumber}>
+                    {withLineNumbers && <LineNo>{lineNumber}</LineNo>}
+                    <LineContent>
+                      {line.map((token, key) => (
+                        <span {...getTokenProps({ token })} key={key} />
+                      ))}
+                    </LineContent>
+                  </Line>
+                );
+              })}
+            </Pre>
+          </CodeWrapper>
+          {caption && <Caption>{caption}</Caption>}
+        </>
+      )}
+    </Highlight>
   );
 }
 
@@ -95,10 +77,12 @@ function CopyIcon() {
       <path
         fill="currentColor"
         d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
-      ></path>
+      />
     </svg>
   );
 }
+
+// Styled Components
 
 const Caption = styled.small`
   position: relative;
