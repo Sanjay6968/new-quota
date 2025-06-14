@@ -1,0 +1,47 @@
+{
+  "name": "auto-quote-generator",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@accessible/drawer": "^3.0.2",
+    "@n8tb1t/use-scroll-position": "^2.0.3",
+    "@phntms/next-gtm": "^0.3.0",
+    "@react-three/drei": "^9.106.0",
+    "@react-three/fiber": "^8.16.7",
+    "axios": "^1.7.2",
+    "canvas": "^2.11.2",
+    "css-in-js-media": "^2.0.1",
+    "date-fns": "^3.6.0",
+    "gray-matter": "^4.0.3",
+    "next": "^14.2.30",
+    "next-seo": "^6.5.0",
+    "nextjs-color-mode": "^1.0.5",
+    "react": "18",
+    "react-animate-height": "^3.2.3",
+    "react-dom": "18",
+    "react-hook-form": "^7.51.5",
+    "react-lazyload": "^3.2.1",
+    "react-select": "^5.8.0",
+    "react-share": "^5.1.0",
+    "styled-components": "^6.1.11",
+    "swiper": "^11.1.4",
+    "three": "^0.165.0",
+    "three-js": "^79.0.0",
+    "tinacms": "^2.1.1",
+    "use-clipboard-copy": "^0.2.0",
+    "wasm-stl-thumbnailer": "^0.1.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.8",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/react-lazyload": "^3.2.3",
+    "typescript": "^5"
+  }
+}

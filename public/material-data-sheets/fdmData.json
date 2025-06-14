@@ -1,0 +1,139 @@
+{
+  "materials": [
+    {
+      "name": "PLA",
+      "properties": {
+        "Density": "1.24 g/cm³",
+        "Printing Temperature": "180-220°C",
+        "Bed Temperature": "20-60°C",
+        "Strength": "Moderate",
+        "Flexibility": "Low"
+      },
+      "cost": {
+        "per_gram": 5,
+        "per_hour": 100,
+        "color_options": ["White", "Black", "Grey"]
+      }
+    },
+    {
+      "name": "ABS",
+      "properties": {
+        "Density": "1.04 g/cm³",
+        "Printing Temperature": "210-250°C",
+        "Bed Temperature": "80-110°C",
+        "Strength": "High",
+        "Flexibility": "Moderate"
+      },
+      "cost": {
+        "per_gram": 10,
+        "per_hour": 170,
+        "color_options": ["Natural", "Black"]
+      }
+    },
+    {
+      "name": "PETG",
+      "properties": {
+        "Density": "1.27 g/cm³",
+        "Printing Temperature": "220-250°C",
+        "Bed Temperature": "60-80°C",
+        "Strength": "High",
+        "Flexibility": "Moderate"
+      },
+      "cost": {
+        "per_gram": 7,
+        "per_hour": 140,
+        "color_options": ["White", "Natural", "Black"]
+      }
+    },
+    {
+      "name": "TPU",
+      "properties": {
+        "Density": "1.21 g/cm³",
+        "Printing Temperature": "210-230°C",
+        "Bed Temperature": "20-60°C",
+        "Strength": "Medium",
+        "Flexibility": "High"
+      },
+      "cost": {
+        "per_gram": 10,
+        "per_hour": 170,
+        "color_options": ["White", "Black"]
+      }
+    },
+    {
+      "name": "ASA",
+      "properties": {
+        "Density": "N/A",
+        "Printing Temperature": "N/A",
+        "Bed Temperature": "N/A",
+        "Strength": "High",
+        "Flexibility": "Moderate"
+      },
+      "cost": {
+        "per_gram": 13,
+        "per_hour": 200,
+        "color_options": ["White"]
+      }
+    },
+    {
+      "name": "CF+PLA",
+      "properties": {
+        "Density": "N/A",
+        "Printing Temperature": "N/A",
+        "Bed Temperature": "N/A",
+        "Strength": "High",
+        "Flexibility": "Moderate"
+      },
+      "cost": {
+        "per_gram": 10,
+        "per_hour": 170,
+        "color_options": ["Black"]
+      }
+    },
+    {
+      "name": "CF+PETG",
+      "properties": {
+        "Density": "N/A",
+        "Printing Temperature": "N/A",
+        "Bed Temperature": "N/A",
+        "Strength": "High",
+        "Flexibility": "Moderate"
+      },
+      "cost": {
+        "per_gram": 10,
+        "per_hour": 170,
+        "color_options": ["Black"]
+      }
+    },
+    {
+      "name": "ABS FR",
+      "properties": {
+        "Density": "N/A",
+        "Printing Temperature": "N/A",
+        "Bed Temperature": "N/A",
+        "Strength": "High",
+        "Flexibility": "Moderate"
+      },
+      "cost": {
+        "per_gram": 20,
+        "per_hour": 250,
+        "color_options": ["Black"]
+      }
+    },
+    {
+      "name": "PC",
+      "properties": {
+        "Density": "N/A",
+        "Printing Temperature": "N/A",
+        "Bed Temperature": "N/A",
+        "Strength": "High",
+        "Flexibility": "Moderate"
+      },
+      "cost": {
+        "per_gram": 20,
+        "per_hour": 250,
+        "color_options": ["White", "Natural"]
+      }
+    }
+  ]
+}
