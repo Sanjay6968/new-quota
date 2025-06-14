@@ -13,7 +13,6 @@ import { useRouter } from 'next/router';
 import { DefaultSeo } from 'next-seo';
 import { ColorModeScript } from 'nextjs-color-mode';
 import React, { PropsWithChildren } from 'react';
-import { TinaEditProvider } from 'tinacms/dist/edit-state';
 
 import Footer from '@/components/Footer';
 import { GlobalStyle } from '@/components/GlobalStyles';
@@ -30,7 +29,8 @@ const poppins = Poppins({
   display: 'swap',
 });
 
-const TinaCMS = dynamic(() => import('tinacms'), { ssr: false });
+// TinaCMS import removed
+// const TinaCMS = dynamic(() => import('tinacms'), { ssr: false });
 
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID || "";
 
@@ -43,12 +43,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       const accessToken = localStorage.getItem('accessToken');
       setIsAuthenticated(!!accessToken);
     };
-  
+
     checkAuth();
-  
-    // Listen for storage changes across tabs/windows
+
     window.addEventListener('storage', checkAuth);
-  
     return () => {
       window.removeEventListener('storage', checkAuth);
     };
@@ -57,11 +55,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   const handleSignOut = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-
-    window.dispatchEvent(new Event('storage')); // Trigger storage event
-
+    window.dispatchEvent(new Event('storage'));
     setIsAuthenticated(false);
-    router.push('/dashboard/sign-in'); // Redirect to sign-in page
+    router.push('/dashboard/sign-in');
   };
 
   const navItems: NavItems = [
@@ -70,9 +66,23 @@ function MyApp({ Component, pageProps }: AppProps) {
     { title: 'Track Order', href: '/tracking', target: '_blank' },
     { title: 'Order History', href: '/order-history' },
     isAuthenticated
-    ? { title: 'Sign Out', href: '/dashboard/sign-in', onClick: handleSignOut, bordered: true}
-    : { title: 'Sign In', href: '/dashboard/sign-in', bordered: true },
-    { title: 'STORE', href: 'https://store.mekuva.com', outlined: true, target: '_blank' },
+      ? {
+          title: 'Sign Out',
+          href: '/dashboard/sign-in',
+          onClick: handleSignOut,
+          bordered: true,
+        }
+      : {
+          title: 'Sign In',
+          href: '/dashboard/sign-in',
+          bordered: true,
+        },
+    {
+      title: 'STORE',
+      href: 'https://store.mekuva.com',
+      outlined: true,
+      target: '_blank',
+    },
   ];
 
   const excludedRoutes = [
@@ -95,7 +105,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <DefaultSeo {...SEO} />
         <Providers navItems={navItems}>
           {!isExcludedRoute && <Navbar items={navItems} />}
-          
+
+          {/* Tina CMS is disabled below */}
+          {/* 
           <TinaEditProvider
             editMode={
               <TinaCMS
@@ -113,6 +125,11 @@ function MyApp({ Component, pageProps }: AppProps) {
           >
             <Component {...pageProps} />
           </TinaEditProvider>
+          */}
+
+          {/* Use standard render since Tina is not used */}
+          <Component {...pageProps} />
+
           {!isExcludedRoute && <WaveCta />}
           {!isExcludedRoute && <Footer />}
         </Providers>

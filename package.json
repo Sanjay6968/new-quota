@@ -29,6 +29,7 @@
     "react-lazyload": "^3.2.1",
     "react-select": "^5.8.0",
     "react-share": "^5.1.0",
+    "reading-time": "^1.5.0",
     "styled-components": "^6.1.11",
     "swiper": "^11.1.4",
     "three": "^0.165.0",
@@ -42,6 +43,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-lazyload": "^3.2.3",
+    "@types/use-resize-observer": "^6.1.0",
     "typescript": "^5"
   }
 }

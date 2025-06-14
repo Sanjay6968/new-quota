@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { EnvVars } from '@/env';
 import { STLViewer } from '../../../components/stl-loader';
 import { CustomizeDetails, CustomizationDetails } from '../customization/customization';
-import { DeliveryDetails } from '../delivery-details/delivery';
+import DeliveryDetails from '../delivery-details/delivery';
 import CheckoutDetails from '../checkout/checkout';
 import axiosInstance from '@/axiosInstance';
 import Modal from '@/components/Modal';

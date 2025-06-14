@@ -550,6 +550,40 @@ const SliderContainer = styled.div`
       border-radius: 50%;
       background: #fed700;
       cursor: pointer;
+
     }
   }
 `;
+// Add this wrapper component at the end of your file, just before the export default:
+
+const CustomizationPageWrapper = () => {
+  const [activeTab, setActiveTab] = useState<string>('Customize');
+  const [furthestAccessibleTab, setFurthestAccessibleTab] = useState<string>('Customize');
+  const [customizationDetails, setCustomizationDetails] = useState<CustomizationDetails>({
+    selectedTechnology: 'FDM',
+    selectedMaterial: 'PLA',
+    layerThickness: 'NORMAL',
+    filling: 20,
+    colorFinish: 'Natural',
+    scale: 100,
+    selectedPrinterOption: 'STD'
+  });
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
+
+  const handleCustomizationChange = (newDetails: CustomizationDetails) => {
+    setCustomizationDetails(newDetails);
+  };
+
+  return (
+    <CustomizeDetails
+      setActiveTab={setActiveTab}
+      setFurthestAccessibleTab={setFurthestAccessibleTab}
+      customizationDetails={customizationDetails}
+      onCustomizationChange={handleCustomizationChange}
+      fileUrl={fileUrl}
+    />
+  );
+};
+
+// Then change your export to:
+export default CustomizationPageWrapper;

@@ -6,7 +6,7 @@ export interface UseEscCloseProps {
 
 export default function useEscClose({ onClose }: UseEscCloseProps) {
   const handleUserKeyPress = useCallback(
-    (event) => {
+    (event: KeyboardEvent) => {
       const { keyCode } = event;
       const escapeKeyCode = 27;
       if (keyCode === escapeKeyCode) {
@@ -23,3 +23,4 @@ export default function useEscClose({ onClose }: UseEscCloseProps) {
     };
   }, [handleUserKeyPress]);
 }
+
