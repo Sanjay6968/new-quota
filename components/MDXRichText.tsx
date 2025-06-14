@@ -1,23 +1,25 @@
 import styled from 'styled-components';
-import { Components, TinaMarkdown, TinaMarkdownContent } from 'tinacms/dist/rich-text';
 import { media } from '@/utils/media';
 import ArticleImage from './ArticleImage';
 import Code from './Code';
 import Link from './Link';
 import Quote from './Quote';
 
-export default function RichText(props: { content: TinaMarkdownContent | TinaMarkdownContent[] }) {
+// Placeholder props (you can update this when integrating another markdown renderer)
+export default function RichText(props: { content: any }) {
+  // TODO: Replace this with your actual rendering logic (e.g., using react-markdown)
   return (
     <Container>
-      <TinaMarkdown content={props.content} components={components as Components<{}>} />
+      {/* Replace this with actual render logic */}
+      <p style={{ color: 'gray', fontStyle: 'italic' }}>
+        Rich text renderer is not implemented. Please integrate a markdown renderer here.
+      </p>
     </Container>
   );
 }
 
 const Container = styled.div`
   display: flex;
-  ${'' /* Opting-out of margin-collapse */}
-
   flex-direction: column;
   width: 100%;
 
@@ -38,7 +40,7 @@ const Container = styled.div`
 
   & > section,
   .footnotes {
-    ${'' /* content-visibility: auto; */}
+    /* Optional content-visibility */
   }
 
   ol,
@@ -47,6 +49,7 @@ const Container = styled.div`
     line-height: 2.7rem;
     margin: 0;
     padding-left: 2.4rem;
+
     li {
       & > * {
         vertical-align: top;
@@ -103,6 +106,7 @@ const TextHighlight = styled.code`
   font-family: inherit;
 `;
 
+// This is still useful if you plug in a Markdown or MDX renderer
 const components = {
   h2: SecondHeading,
   h3: ThirdHeading,
