@@ -1,0 +1,8 @@
+# Ignore all cache and build artifacts
+.next/cache
+.next/server
+.next/webpack
+node_modules
+# Optional - reduces size
+*.log
+*.tsbuildinfo
