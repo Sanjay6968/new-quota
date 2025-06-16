@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "rimraf .next/cache",
-    "build": "npm run prebuild && next build && next export",
+    "build": "npm run prebuild && next build ",
     "start": "next start",
     "lint": "next lint"
   },
