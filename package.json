@@ -6,6 +6,7 @@
     "dev": "next dev",
     "prebuild": "rimraf .next/cache",
     "build": "next build",
+    "export": "next export",
     "start": "next start",
     "lint": "next lint"
   },
