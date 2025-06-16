@@ -4,12 +4,9 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { EnvVars } from '@/env';
 import { STLViewer } from '../../../components/stl-loader';
-import { CustomizationDetails } from '../customization/customization';
-
-// Lazy load components for better performance
-const CustomizeDetails = React.lazy(() => import('../customization/customization').then(module => ({ default: module.CustomizeDetails })));
-const DeliveryDetails = React.lazy(() => import('../delivery-details/delivery'));
-const CheckoutDetails = React.lazy(() => import('../checkout/checkout'));
+import { CustomizeDetails, CustomizationDetails } from '../customization/customization';
+import DeliveryDetails from '../delivery-details/delivery';
+import CheckoutDetails from '../checkout/checkout';
 import axiosInstance from '@/axiosInstance';
 import Modal from '@/components/Modal';
 
@@ -35,8 +32,6 @@ interface DropdownProps {
 
 interface PreviewBoxProps {
   isFileSelected: boolean;
-  dimensions: string;
-  volume: string;
 }
 
 type InputFieldProps = {
@@ -163,16 +158,12 @@ export default function Upload() {
           message="Your session has expired. Please sign in again." 
           onClose={() => router.push('/dashboard/sign-in')}
           buttonText="Sign In Again"
-        />
+          />
       )}
       <UploadContainer>
-        <PreviewBox isFileSelected={selectedFile !== null} dimensions={dimensions} volume={volume}>
+      <PreviewBox isFileSelected={selectedFile !== null} dimensions={dimensions} volume={volume} >
           {selectedFile ? (
-            <STLViewer 
-              fileUrl={fileUrl} 
-              onDimensionsCalculated={handleDimensionsCalculated} 
-              onVolumeCalculated={handleVolumeCalculated} 
-            />
+            <STLViewer fileUrl={fileUrl} onDimensionsCalculated={handleDimensionsCalculated} onVolumeCalculated={handleVolumeCalculated} />
           ) : (
             <>
               <Image src="/files.png" alt="Files Icon" />
@@ -181,7 +172,7 @@ export default function Upload() {
           )}
         </PreviewBox>
       </UploadContainer>
-      
+      {activeTab === 'Checkout'}
       <TabbedContainer>
         <Tabs>
           {tabOrder.map((tabName, index) => (
@@ -196,44 +187,36 @@ export default function Upload() {
           ))}
         </Tabs>
         <Content>
-          <React.Suspense fallback={<div>Loading...</div>}>
-            {activeTab === 'Upload' && (
-              <UploadDetails 
-                selectedFile={selectedFile} 
-                setSelectedFile={setSelectedFile}
-                setFileName={setFileName}
-                fileUrl={fileUrl}
-                setFurthestAccessibleTab={setFurthestAccessibleTab}
-                setActiveTab={setActiveTab}
-              />
-            )}
-            {activeTab === 'Customize' && (
-              <CustomizeDetails 
-                setActiveTab={setActiveTab}
-                setFurthestAccessibleTab={setFurthestAccessibleTab}
-                customizationDetails={customizationDetails}
-                onCustomizationChange={handleCustomizationChange}
-                fileUrl={fileUrl}
-              />
-            )}
-            {activeTab === 'Delivery Options' && (
-              <DeliveryDetails
-                setActiveTab={setActiveTab}
-                setFurthestAccessibleTab={setFurthestAccessibleTab}
-                pincode={pincode}
-                setPincode={setPincode}
-                shippingAddress={shippingAddress}
-                setShippingAddress={setShippingAddress}
-              />
-            )}
-            {activeTab === 'Checkout' && (
-              <CheckoutDetails 
-                fileName={fileName} 
-                shippingAddress={shippingAddress} 
-                amount={0}
-              />
-            )}
-          </React.Suspense>
+          {activeTab === 'Upload' && (
+            <UploadDetails 
+              selectedFile={selectedFile} 
+              setSelectedFile={setSelectedFile}
+              setFileName={setFileName}
+              fileUrl={fileUrl}
+              setFurthestAccessibleTab={setFurthestAccessibleTab}
+              setActiveTab={setActiveTab}
+            />
+          )}
+          {activeTab === 'Customize' && (
+            <CustomizeDetails 
+              setActiveTab={setActiveTab}
+              setFurthestAccessibleTab={setFurthestAccessibleTab}
+              customizationDetails={customizationDetails}
+              onCustomizationChange={handleCustomizationChange}
+              fileUrl={fileUrl}
+            />
+          )}
+          {activeTab === 'Delivery Options' && (
+            <DeliveryDetails
+              setActiveTab={setActiveTab}
+              setFurthestAccessibleTab={setFurthestAccessibleTab}
+              pincode={pincode}
+              setPincode={setPincode}
+              shippingAddress={shippingAddress}
+              setShippingAddress={setShippingAddress}
+            />
+          )}
+          {activeTab === 'Checkout' && <CheckoutDetails fileName={fileName} shippingAddress={shippingAddress} amount={0}/>}
         </Content>
       </TabbedContainer>
     </MainContainer>
@@ -245,7 +228,7 @@ const Heading = styled.h1`
   font-weight: bold;
   font-family: 'Poppins', sans-serif;
   color: #fff;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.5em; // Space below the heading
 `;
 
 const SubText = styled.p`
@@ -257,39 +240,30 @@ const SubText = styled.p`
   margin-bottom: 20px;
 `;
 
-function UploadDetails({ 
-  selectedFile, 
-  setSelectedFile, 
-  setFileName, 
-  fileUrl, 
-  setFurthestAccessibleTab, 
-  setActiveTab 
-}: UploadDetailsProps) {
+function UploadDetails({ selectedFile, setSelectedFile, setFileName, fileUrl,setFurthestAccessibleTab, setActiveTab}: UploadDetailsProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [borderColor, setBorderColor] = useState('#b0b0b0');
 
-  const handleFileUpload = async (file: File) => {
+  const handleFileUpload = (file: File) => {
     const accessToken = localStorage.getItem('accessToken');
     
     if (!accessToken) {
       console.error('Access token is missing!');
-      handleError('Authentication required. Please sign in.');
       return;
     }
   
     const formData = new FormData();
     formData.append('file', file);
   
-    try {
-      const response = await axios.post(EnvVars.API + 'api/public/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${accessToken}`,
-        }
-      });
-
+    axios.post(EnvVars.API + 'api/public/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${accessToken}`,
+      }
+    })
+    .then(response => {
       if (response.status === 200) {
         const token = response.data.token;
         if (token) {
@@ -303,16 +277,15 @@ function UploadDetails({
         handleError('Unexpected response from server.');
         console.log('File uploaded but no token received');
       }
-    } catch (error: any) {
+    })
+    .catch(error => {
       console.error('Error uploading file', error);
       if (error.response?.status === 422) {
         handleError("Invalid file format. Please upload a valid STL file.");
-      } else if (error.response?.status === 401) {
-        handleError("Authentication failed. Please sign in again.");
       } else {
         handleError("File upload failed. Please try again.");
       }
-    }
+    });
   };  
 
   const handleError = (message: string) => {
@@ -372,10 +345,11 @@ function UploadDetails({
         onClick={handleDragDropContainerClick}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        style={{ borderColor }}
       >
         {selectedFile ? (
+          <>
           <FileName>{selectedFile.name}</FileName>
+          </>
         ) : (
           <>
             <Image src="/upload.png" alt="Upload Icon" />
@@ -383,7 +357,6 @@ function UploadDetails({
           </>
         )}
       </DragDropContainer>
-      
       {isErrorModalOpen && (
         <Modal 
           title="Upload Error"
@@ -392,7 +365,6 @@ function UploadDetails({
           buttonText="OK"
         />
       )}
-      
       <input
         type="file"
         style={{ display: 'none' }}
@@ -400,9 +372,7 @@ function UploadDetails({
         onChange={handleFileInputChange}
         accept=".stl,.obj,.step,.stp,.3mf,.dxf,.zip"
       />
-      
       {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-      
       {selectedFile && (
         <ButtonContainer>
           <NextButton
@@ -415,12 +385,9 @@ function UploadDetails({
           </NextButton>
         </ButtonContainer>
       )}
-      
       {!selectedFile && (
         <CenterContainer>
-          <SmallText>
-            By uploading model I accept <Link href="/privacy-policy">Terms & Conditions</Link>
-          </SmallText>
+          <SmallText>By uploading model I accept <Link href="/privacy-policy">Terms & Conditions</Link></SmallText>
         </CenterContainer>
       )}
     </UploadDetailsContainer>
@@ -508,6 +475,7 @@ const NextButton = styled.button`
   }
 `;
 
+// Styled-components for the main layout
 const MainContainer = styled.div`
   display: flex;
   min-height: 100vh;
@@ -541,7 +509,7 @@ const UploadContainer = styled.div`
   }
 `;
 
-const PreviewBox = styled.div<PreviewBoxProps>`
+const PreviewBox = styled.div<PreviewBoxProps & { dimensions: string; volume: string }>`
   position: relative;
   width: 100%;
   max-width: 500px;
@@ -559,7 +527,7 @@ const PreviewBox = styled.div<PreviewBoxProps>`
   overflow: hidden;
 
   &::after {
-    content: ${props => props.isFileSelected ? `'Dimensions: ${props.dimensions}\\A Volume: ${props.volume}'` : 'none'};
+    content: ${props => props.isFileSelected ? `'Dimensions: ${props.dimensions} \\A Volume: ${props.volume}'` : 'none'};
     white-space: pre;
     position: absolute;
     bottom: 0;
@@ -630,7 +598,7 @@ const Tabs = styled.div`
 
 const Tab = styled.div<TabProps>`
   flex: 1;
-  min-width: max-content;
+  min-width: max-content; // Prevent text wrapping
   display: flex;
   align-items: center;
   justify-content: center;
@@ -644,7 +612,7 @@ const Tab = styled.div<TabProps>`
   border-radius: 5px 5px 0 0;
   gap: 10px;
   transition: background-color 0.3s, color 0.3s;
-  white-space: nowrap;
+  white-space: nowrap; // Keep text in one line
   
   &:hover {
     background-color: ${props => props.isActive ? '#0a121e' : '#e0e0e0'};
