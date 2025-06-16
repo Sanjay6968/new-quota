@@ -3,6 +3,11 @@
 .next/server
 .next/webpack
 .next/cache/webpack
+.next/cache
+.next/cache/**
+.next/cache/webpack
+.next/cache/webpack/client-production
+
 node_modules
 # Optional - reduces size
 *.log
