@@ -6,8 +6,9 @@
 .next/cache
 .next/cache/**
 .next/cache/webpack
+ uploads
+uploads/**
 .next/cache/webpack/client-production
-
 node_modules
 # Optional - reduces size
 *.log
