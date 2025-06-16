@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "rm -rf .next/cache",
+    "prebuild": "rimraf .next/cache",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -46,6 +46,7 @@
     "@types/react-dom": "^18",
     "@types/react-lazyload": "^3.2.3",
     "@types/use-resize-observer": "^6.1.0",
+    "rimraf": "^6.0.1",
     "typescript": "^5"
   }
 }
