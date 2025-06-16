@@ -2,6 +2,7 @@
 .next/cache
 .next/server
 .next/webpack
+.next/cache/webpack
 node_modules
 # Optional - reduces size
 *.log
