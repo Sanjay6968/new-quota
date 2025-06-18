@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import { media } from '@/utils/media';
-import MailSentState from '../../components/MailSentState';
+import MailSentState from '@/components/MailSentState';
 
 interface EmailPayload {
   name: string;
@@ -20,16 +20,13 @@ export default function FormSection() {
 
   const onSubmit: SubmitHandler<EmailPayload> = async (payload) => {
     try {
-      // Create a mailto link using the email payload
-      const mailtoLink = `mailto:${payload.email}?subject=Email%20from%20contact%20form&body=${encodeURIComponent(payload.description)}`;
-      
-      // Open the user's default email client with the mailto link
+      const mailtoLink = `mailto:contactus@mekuva.com?subject=Message from ${encodeURIComponent(
+        payload.name
+      )}&body=${encodeURIComponent(`Email: ${payload.email}\n\n${payload.description}`)}`;
+
       window.location.href = mailtoLink;
-      
-      // Email sent successfully
       setHasSuccessfullySentMail(true);
     } catch {
-      // Error occurred
       setHasErrored(true);
     }
   };
