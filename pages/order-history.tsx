@@ -19,30 +19,28 @@ const OrderHistoryPage = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-  const fetchOrders = async () => {
-    try {
-      const response = await axios.get(EnvVars.API + 'api/public/customer/orders', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get(EnvVars.API + 'api/public/customer/orders', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
 
-      setOrders(response.data);
-    } catch (err) {
-      if (err.response && err.response.status === 404) {
-        // If 404 with custom message
-        setError(err.response.data.message || 'No orders found.');
-      } else {
-        // Other errors (e.g. 401, network)
-        setError('Session Expired. Please sign in again.');
+        setOrders(response.data);
+      } catch (err: any) {
+        if (err.response && err.response.status === 404) {
+          setError(err.response.data.message || 'No orders found.');
+        } else {
+          setError('Session Expired. Please sign in again.');
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchOrders();
-}, []);
+    fetchOrders();
+  }, []);
 
   return (
     <Page title="Order History">
@@ -72,7 +70,10 @@ const OrderHistoryPage = () => {
                   <Td>{order.orderId}</Td>
                   <Td>{order.status}</Td>
                   <Td>{order.progress}</Td>
-                  <Td>{order.printPrices?.totalFinalAmount !== undefined && `₹${order.printPrices.totalFinalAmount.toLocaleString('en-IN')}`}</Td>
+                  <Td>
+                    {order.printPrices?.totalFinalAmount !== undefined &&
+                      `₹${order.printPrices.totalFinalAmount.toLocaleString('en-IN')}`}
+                  </Td>
                   <Td>
                     <ActionButton onClick={() => handleOrderClick(order.orderId)}>View Details</ActionButton>
                   </Td>
