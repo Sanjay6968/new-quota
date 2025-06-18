@@ -19,23 +19,30 @@ const OrderHistoryPage = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await axios.get(EnvVars.API + 'api/public/customer/orders', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        });
-        setOrders(response.data);
-      } catch (err) {
-        setError('Session Expired. Please sign in again.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get(EnvVars.API + 'api/public/customer/orders', {
+        headers: {
+          Authorization: Bearer ${localStorage.getItem('accessToken')},
+        },
+      });
 
-    fetchOrders();
-  }, []);
+      setOrders(response.data);
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        // If 404 with custom message
+        setError(err.response.data.message || 'No orders found.');
+      } else {
+        // Other errors (e.g. 401, network)
+        setError('Session Expired. Please sign in again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchOrders();
+}, []);
 
   return (
     <Page title="Order History">
