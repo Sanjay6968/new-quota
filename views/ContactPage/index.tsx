@@ -1,5 +1,3 @@
-// views/ContactPage/index.tsx
-
 import React from 'react';
 import styled from 'styled-components';
 import FormSection from './FormSection';
@@ -20,6 +18,7 @@ const ContactWrapper = styled.div`
   align-items: flex-start;
   gap: 3rem;
   padding: 4rem;
+  flex-wrap: wrap;
 
   @media (max-width: 768px) {
     flex-direction: column;
