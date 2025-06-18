@@ -62,7 +62,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const navItems: NavItems = [
     { title: 'Gallery', href: '/gallery' },
-    { title: 'Contact', href: '/contact' },
+    { title: 'Contact', href: '/dashboard/contact' },
     { title: 'Track Order', href: '/tracking', target: '_blank' },
     { title: 'Order History', href: '/order-history' },
     isAuthenticated
