@@ -23,7 +23,7 @@ const OrderHistoryPage = () => {
     try {
       const response = await axios.get(EnvVars.API + 'api/public/customer/orders', {
         headers: {
-          Authorization: Bearer ${localStorage.getItem('accessToken')},
+          Authorization: `Bearer ${localStorage.getItem('accessToken')},
         },
       });
 
