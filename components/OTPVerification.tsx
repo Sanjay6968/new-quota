@@ -61,7 +61,7 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ onVerify, email, orde
 
   const handleVerify = async () => {
     try {
-      const response = await fetch('http://back.mekuva.com/api/public/customer/verify-otp', {
+      const response = await fetch('https://back.mekuva.com/api/public/customer/verify-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
