@@ -61,7 +61,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   };
 
   const navItems: NavItems = [
-    { title: 'Gallery', href: '/gallery' },
+    { title: 'Gallery', href: 'https://mekuva.com/gallery' },
     { title: 'Contact', href: 'https://mekuva.com/contact' },
     { title: 'Track Order', href: '/tracking', target: '_blank' },
     { title: 'Order History', href: '/order-history' },
