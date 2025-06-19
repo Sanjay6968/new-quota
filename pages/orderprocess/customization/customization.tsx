@@ -553,3 +553,6 @@ const SliderContainer = styled.div`
     }
   }
 `;
+export default CustomizeDetails;
+export { CustomizeDetails };
+export type { CustomizationDetails, DropdownProps, SliderProps };
