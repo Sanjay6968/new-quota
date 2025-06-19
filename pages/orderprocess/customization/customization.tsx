@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { EnvVars } from '@/env';
 import ModalCustom from '@/components/ModalCustom';
 import MaterialTable from '@/utils/MaterialTable';
-import fdmData from '@/public/material-data-sheets/fdmData.json';
+import fdmData from '@/utils/fdmData';
 import { STLViewer } from '../../../components/stl-loader';
 import { OptionType } from '@/types/types';
 import { TechnologyDropdown } from '@/components/TechnologyDropdown';
@@ -44,7 +44,21 @@ interface CustomizeDetailsProps {
   fileUrl: string | null;
 }
 
-function CustomizeDetails({ setActiveTab, setFurthestAccessibleTab, customizationDetails, onCustomizationChange, fileUrl }: CustomizeDetailsProps) {
+function CustomizeDetails({
+  setActiveTab = () => {},
+  setFurthestAccessibleTab = () => {},
+  customizationDetails = {
+    selectedTechnology: '',
+    selectedMaterial: '',
+    layerThickness: '',
+    filling: 0,
+    colorFinish: '',
+    scale: 1,
+    selectedPrinterOption: ''
+  },
+  onCustomizationChange = () => {},
+  fileUrl = null
+}: Partial<CustomizeDetailsProps>) {
   const [selectedTechnology, setSelectedTechnology] = useState(customizationDetails.selectedTechnology);
   const [selectedMaterial, setSelectedMaterial] = useState(customizationDetails.selectedMaterial);
   const [layerThickness, setLayerThickness] = useState(customizationDetails.layerThickness);
