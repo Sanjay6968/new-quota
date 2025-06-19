@@ -1,4 +1,4 @@
-// ⬇️ This component now displays a summary and full customization form with label mappings
+// ⬇️ This component now displays a summary and full customization form with server call
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -9,15 +9,9 @@ import MaterialTable from '@/utils/MaterialTable';
 import fdmData from '@/utils/fdmData';
 import { STLViewer } from '../../../components/stl-loader';
 import { OptionType } from '@/types/types';
-import { colorOptions } from '@/components/ColorFinishDropdown';
-import { getMaterialOptions } from '@/components/MaterialDropdown';
-
-// ✅ Option 2: Define technology options locally
-const technologyOptions: OptionType[] = [
-  { label: 'FDM', value: 'fdm' },
-  { label: 'SLA', value: 'sla' },
-  { label: 'SLS', value: 'sls' }
-];
+import { TechnologyDropdown } from '@/components/TechnologyDropdown';
+import { ColorFinishDropdown, colorOptions } from '@/components/ColorFinishDropdown';
+import { MaterialDropdown, getMaterialOptions } from '@/components/MaterialDropdown';
 
 interface DropdownProps {
   label: string;
@@ -68,10 +62,6 @@ function CustomizeDetails({
 }: Partial<CustomizeDetailsProps>) {
   const [isLoading, setIsLoading] = useState(false);
 
-  // ✅ Helper must go here (not inside JSX!)
-  const getLabel = (value: string, options: OptionType[]): string =>
-    options.find(option => option.value === value)?.label || value || '-';
-
   const handleNextButtonClick = async () => {
     setIsLoading(true);
     try {
@@ -108,26 +98,17 @@ function CustomizeDetails({
         perfect your 3D print.
       </SubText>
 
-      <Summary>
-        <Line>
-          <Label>Technology:</Label> {getLabel(customizationDetails.selectedTechnology, technologyOptions)}
-        </Line>
-        <Line>
-          <Label>Material:</Label> {getLabel(customizationDetails.selectedMaterial, getMaterialOptions(customizationDetails.selectedTechnology))}
-        </Line>
-        <Line>
-          <Label>Layer Thickness:</Label> {customizationDetails.layerThickness || '-'}
-        </Line>
-        <Line>
-          <Label>Printer:</Label> {customizationDetails.selectedPrinterOption || '-'}
-        </Line>
-        <Line>
-          <Label>Infill:</Label> {typeof customizationDetails.filling === 'number' ? `${customizationDetails.filling} %` : '-'}
-        </Line>
-        <Line>
-          <Label>Color and Finishes:</Label> {getLabel(customizationDetails.colorFinish, colorOptions.getColorFinishOptions(customizationDetails.selectedTechnology, customizationDetails.selectedMaterial))}
-        </Line>
-      </Summary>
+      const getLabel = (value: string, options: OptionType[]) =>
+  options.find(option => option.value === value)?.label || value || '-';
+
+<Summary>
+  <Line><Label>Technology:</Label> {getLabel(customizationDetails.selectedTechnology, TechnologyDropdown.defaultProps?.options || [])}</Line>
+  <Line><Label>Material:</Label> {getLabel(customizationDetails.selectedMaterial, getMaterialOptions(customizationDetails.selectedTechnology))}</Line>
+  <Line><Label>Layer Thickness:</Label> {customizationDetails.layerThickness || '-'}</Line>
+  <Line><Label>Printer:</Label> {customizationDetails.selectedPrinterOption || '-'}</Line>
+  <Line><Label>Infill:</Label> {typeof customizationDetails.filling === 'number' ? `${customizationDetails.filling} %` : '-'}</Line>
+  <Line><Label>Color and Finishes:</Label> {getLabel(customizationDetails.colorFinish, colorOptions.getColorFinishOptions(customizationDetails.selectedTechnology, customizationDetails.selectedMaterial))}</Line>
+</Summary>
 
       <div id="stl-viewer-container" style={{ marginTop: '20px' }}></div>
 
@@ -140,7 +121,6 @@ function CustomizeDetails({
   );
 }
 
-// ✅ Styled Components
 const Heading = styled.h1`
   font-size: 2rem;
   font-weight: bold;
