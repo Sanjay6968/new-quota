@@ -205,6 +205,30 @@ const CustomizeDetails: React.FC<CustomizeDetailsProps> = ({ setActiveTab, setFu
     }
   }, [dimensions]);
 
+  const handleTechnologyChange = (value: string) => {
+    setSelectedTechnology(value);
+    onCustomizationChange({ ...customizationDetails, selectedTechnology: value });
+  };
+
+  const handleMaterialChange = (value: string) => {
+    setSelectedMaterial(value);
+    const newColorOptions = colorOptions.getColorFinishOptions(selectedTechnology, value);
+    setColorOptionsState(newColorOptions);
+    const newColor = newColorOptions.find(option => option.value === customizationDetails.colorFinish)?.value || newColorOptions[0]?.value || '';
+    setColorFinish(newColor);
+    onCustomizationChange({ ...customizationDetails, selectedMaterial: value, colorFinish: newColor });
+  };
+
+  const handleColorFinishChange = (value: string) => {
+    setColorFinish(value);
+    onCustomizationChange({ ...customizationDetails, colorFinish: value });
+  };
+
+  const handleLayerThicknessChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setLayerThickness(e.target.value);
+    onCustomizationChange({ ...customizationDetails, layerThickness: e.target.value });
+  };
+
   const handleDimensionsCalculated = (dim: string) => {
     const [l, b, h] = dim.split(' x ').map(Number);
     setDimensions({ length: l.toString(), breadth: b.toString(), height: h.toString() });
