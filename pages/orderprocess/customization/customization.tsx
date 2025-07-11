@@ -14,12 +14,13 @@ import { TechnologyDropdown } from '@/components/TechnologyDropdown';
 import { ColorFinishDropdown, colorOptions } from '@/components/ColorFinishDropdown';
 import { MaterialDropdown, getMaterialOptions } from '@/components/MaterialDropdown';
 
-// Interfaces
+// === Interfaces & Types ===
+
 interface DropdownProps {
   label: string;
   options: OptionType[];
   value: string;
-  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   disabled?: boolean;
 }
 
@@ -43,7 +44,7 @@ interface CustomizeDetailsProps {
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
   setFurthestAccessibleTab: React.Dispatch<React.SetStateAction<string>>;
   customizationDetails: CustomizationDetails;
-  onCustomizationChange: (newCustomizationDetails: CustomizationDetails) => void;
+  onCustomizationChange: (newDetails: CustomizationDetails) => void;
   fileUrl: string | null;
 }
 
@@ -58,122 +59,55 @@ type CustomizationPayload = {
   orderId: string;
 };
 
-// Reusable UI Components
-const DropdownContainer = styled.div`
-  display: flex;
-  width: 100%;
-  max-width: 600px;
-  flex-direction: column;
-  gap: 10px;
-`;
+// === UI Components ===
 
-const Label = styled.label`
-  font-size: 1.8rem;
-  font-weight: bold;
-  font-family: 'Poppins', sans-serif;
-`;
-
-const Select = styled.select<{ disabled?: boolean }>`
-  height: 48px;
-  padding: 0 1em;
-  font-size: 1.3rem;
-  font-weight: 700;
-  border: 1px solid #fff;
-  border-radius: 5px;
-  background-color: ${props => props.disabled ? '#4a5568' : '#0a121e'};
-  color: #FFFFFF;
-  appearance: none;
-  opacity: ${props => props.disabled ? '0.7' : '1'};
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-  option {
-    background-color: #FFFFFF;
-    color: #0a121e;
-  }
-`;
-
-const ColorBox = styled.div<{ color: string }>`
-  width: 20px;
-  height: 20px;
-  border-radius: 3px;
-  background-color: ${({ color }) => color};
-  margin-right: 8px;
-  display: inline-block;
-`;
-
-const SliderWrapper = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const InfoButton = styled.div`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  background-color: transparent;
-  border: none;
-  padding: 0;
-`;
-
-const InfoIcon = () => (
-  <svg height="24" width="24" viewBox="0 0 24 24" fill="#fff">
-    <path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9a1 1 0 0 1 1 1v4a1 1 0 0 1-2 0v-4a1 1 0 0 1 1-1zm0-4a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-  </svg>
+const Dropdown: React.FC<DropdownProps> = ({ label, options, value, onChange, disabled = false }) => (
+  <DropdownContainer>
+    <Label>{label}</Label>
+    <Select value={value} onChange={onChange} disabled={disabled}>
+      {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+    </Select>
+  </DropdownContainer>
 );
 
-const ValueBox = styled.input.attrs(props => ({
-  type: 'number',
-  min: props.min,
-  max: props.max,
-}))`
-  width: 50px;
-  height: 30px;
-  margin-left: 10px;
-  background-color: #fff;
-  color: #000;
-  border-radius: 5px;
-  border: none;
-  text-align: center;
-  font-size: 1.5rem;
-  font-weight: bold;
-`;
-
-const Slider: React.FC<SliderProps & { defaultValue: number, onValueChange: (value: number) => void }> = ({ label, min, max, defaultValue, onValueChange }) => {
+const Slider: React.FC<SliderProps & { defaultValue: number; onValueChange: (val: number) => void }> = ({ label, min, max, defaultValue, onValueChange }) => {
   const [value, setValue] = useState(defaultValue);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let input = Number(e.target.value);
-    input = Math.min(max, Math.max(min, input));
-    setValue(input);
-    onValueChange(input);
+  const handle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let v = Math.max(min, Math.min(max, +e.target.value));
+    setValue(v);
+    onValueChange(v);
   };
-
   return (
     <SliderContainer>
       <Label>{label}</Label>
       <SliderWrapper>
-        <input type="range" min={min} max={max} value={value} onChange={handleChange} />
-        <ValueBox value={value} onChange={handleChange} />
+        <input type="range" min={min} max={max} value={value} onChange={handle} />
+        <ValueBox value={value} onChange={handle} />
         <PercentageSymbol>%</PercentageSymbol>
       </SliderWrapper>
     </SliderContainer>
   );
 };
 
-const CustomizeDetails: React.FC<CustomizeDetailsProps> = ({ setActiveTab, setFurthestAccessibleTab, customizationDetails, onCustomizationChange, fileUrl }) => {
+// === Main Component ===
+
+const CustomizeDetails: React.FC<CustomizeDetailsProps> = ({
+  setActiveTab, setFurthestAccessibleTab,
+  customizationDetails, onCustomizationChange, fileUrl
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTechnology, setSelectedTechnology] = useState(customizationDetails.selectedTechnology);
   const [selectedMaterial, setSelectedMaterial] = useState(customizationDetails.selectedMaterial);
   const [layerThickness, setLayerThickness] = useState(customizationDetails.layerThickness);
   const [filling, setFilling] = useState(customizationDetails.filling);
   const [colorFinish, setColorFinish] = useState(customizationDetails.colorFinish);
-  const [scale, setScale] = useState(customizationDetails.scale);
   const [selectedPrinterOption, setSelectedPrinterOption] = useState(customizationDetails.selectedPrinterOption);
   const [dimensions, setDimensions] = useState({ length: '', breadth: '', height: '' });
   const [volume, setVolume] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [colorOptionsState, setColorOptionsState] = useState<OptionType[]>([]);
 
+  // STL viewer
   useEffect(() => {
     if (!fileUrl) return;
     const el = document.getElementById('stl-viewer-container');
@@ -184,56 +118,35 @@ const CustomizeDetails: React.FC<CustomizeDetailsProps> = ({ setActiveTab, setFu
     return () => root.unmount();
   }, [fileUrl]);
 
+  // Material options
   useEffect(() => {
-    const materialOptions = getMaterialOptions(selectedTechnology);
-    setSelectedMaterial(materialOptions[0]?.value || '');
+    const opts = getMaterialOptions(selectedTechnology);
+    setSelectedMaterial(opts[0]?.value || '');
   }, [selectedTechnology]);
 
+  // Color finish options
   useEffect(() => {
-    const newColorOptions = colorOptions.getColorFinishOptions(selectedTechnology, selectedMaterial);
-    setColorOptionsState(newColorOptions);
-    setColorFinish(newColorOptions.find(o => o.value === customizationDetails.colorFinish)?.value || newColorOptions[0]?.value || '');
-  }, [selectedTechnology, selectedMaterial, customizationDetails.colorFinish]);
+    const opts = colorOptions.getColorFinishOptions(selectedTechnology, selectedMaterial);
+    setColorOptionsState(opts);
+    setColorFinish(opts.find(o => o.value === customizationDetails.colorFinish)?.value || opts[0]?.value || '');
+  }, [selectedTechnology, selectedMaterial]);
 
+  // Auto select printer by size
   useEffect(() => {
     const { length, breadth, height } = dimensions;
     if (length && breadth && height) {
       const maxDim = Math.max(+length, +breadth, +height);
-      const printer = maxDim <= 200 ? 'STD' : maxDim <= 400 ? 'MED' : 'LGE';
-      setSelectedPrinterOption(printer);
-      onCustomizationChange({ ...customizationDetails, selectedPrinterOption: printer });
+      const p = maxDim <= 200 ? 'STD' : maxDim <= 400 ? 'MED' : 'LGE';
+      setSelectedPrinterOption(p);
+      onCustomizationChange({ ...customizationDetails, selectedPrinterOption: p });
     }
   }, [dimensions]);
 
-  const handleTechnologyChange = (value: string) => {
-    setSelectedTechnology(value);
-    onCustomizationChange({ ...customizationDetails, selectedTechnology: value });
-  };
-
-  const handleMaterialChange = (value: string) => {
-    setSelectedMaterial(value);
-    const newColorOptions = colorOptions.getColorFinishOptions(selectedTechnology, value);
-    setColorOptionsState(newColorOptions);
-    const newColor = newColorOptions.find(option => option.value === customizationDetails.colorFinish)?.value || newColorOptions[0]?.value || '';
-    setColorFinish(newColor);
-    onCustomizationChange({ ...customizationDetails, selectedMaterial: value, colorFinish: newColor });
-  };
-
-  const handleColorFinishChange = (value: string) => {
-    setColorFinish(value);
-    onCustomizationChange({ ...customizationDetails, colorFinish: value });
-  };
-
-  const handleLayerThicknessChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setLayerThickness(e.target.value);
-    onCustomizationChange({ ...customizationDetails, layerThickness: e.target.value });
-  };
-
+  // Handlers
   const handleDimensionsCalculated = (dim: string) => {
     const [l, b, h] = dim.split(' x ').map(Number);
-    setDimensions({ length: l.toString(), breadth: b.toString(), height: h.toString() });
+    setDimensions({ length: l + '', breadth: b + '', height: h + '' });
   };
-
   const handleVolumeCalculated = (v: string) => setVolume(v);
 
   const handleNextButtonClick = async () => {
@@ -241,41 +154,31 @@ const CustomizeDetails: React.FC<CustomizeDetailsProps> = ({ setActiveTab, setFu
     const token = localStorage.getItem('accessToken');
     const orderId = localStorage.getItem('orderId');
     if (!token || !orderId) return;
-
-    const customizationData: CustomizationPayload = {
+    const payload: CustomizationPayload = {
       technology: selectedTechnology,
       material: selectedMaterial,
       colorFinish,
       layerThickness,
       filling,
-      scale,
+      scale: customizationDetails.scale,
       printerOption: selectedPrinterOption,
       orderId
     };
-
     try {
-      await axios.put(EnvVars.API + 'api/public/customization/', customizationData, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      await axios.put(`${EnvVars.API}api/public/customization/`, payload, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-
-      await axios.post(EnvVars.API + 'api/public/add-dimensions', {
+      await axios.post(`${EnvVars.API}api/public/add-dimensions`, {
         orderId,
-        length: parseFloat(dimensions.length),
-        breadth: parseFloat(dimensions.breadth),
-        height: parseFloat(dimensions.height),
-        volume: parseFloat(volume)
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
+        length: +dimensions.length,
+        breadth: +dimensions.breadth,
+        height: +dimensions.height,
+        volume: +volume
+      }, { headers: { Authorization: `Bearer ${token}` } });
       setActiveTab('Delivery Options');
       setFurthestAccessibleTab('Delivery Options');
-    } catch (err) {
-      console.error('Submission failed', err);
+    } catch (e) {
+      console.error(e);
     }
     setIsLoading(false);
   };
@@ -286,7 +189,6 @@ const CustomizeDetails: React.FC<CustomizeDetailsProps> = ({ setActiveTab, setFu
     { label: 'Normal - 0.2mm', value: 'NORMAL' },
     { label: 'Draft - 0.3mm', value: 'DRAFT' }
   ];
-
   const printerOptions = [
     { label: 'STANDARD 220x200x220mm', value: 'STD' },
     { label: 'MEDIUM 400x400x400mm', value: 'MED' },
@@ -297,54 +199,48 @@ const CustomizeDetails: React.FC<CustomizeDetailsProps> = ({ setActiveTab, setFu
     <div>
       <ModalCustom isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <h2>Material Properties</h2>
-        <SubText>Details about materials, properties, and costs.</SubText>
+        <SubText>See material specs and costs.</SubText>
         <MaterialTable materials={fdmData.materials} />
       </ModalCustom>
 
       <Heading>Customize your Order</Heading>
-      <SubText>Tailor model specs, adjust dimensions, materials, and finishing options.</SubText>
+      <SubText>Choose technology, material, finishing & settings</SubText>
 
       <DropdownContainer>
         <Label>Technology</Label>
-        <TechnologyDropdown value={selectedTechnology} onChange={handleTechnologyChange} />
+        <TechnologyDropdown value={selectedTechnology} onChange={e => { setSelectedTechnology(e.target.value); onCustomizationChange({ ...customizationDetails, selectedTechnology: e.target.value }); }} />
 
         <Label>Material</Label>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ flexGrow: 1 }}>
-            <MaterialDropdown options={getMaterialOptions(selectedTechnology)} value={selectedMaterial} onChange={handleMaterialChange} />
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-            <h2 style={{ whiteSpace: "nowrap", margin: 0 }}>Material Selection</h2>
-            <InfoButton onClick={() => setIsModalOpen(true)}>
-              <InfoIcon />
-            </InfoButton>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <MaterialDropdown options={getMaterialOptions(selectedTechnology)} value={selectedMaterial} onChange={e => { setSelectedMaterial(e.target.value); onCustomizationChange({ ...customizationDetails, selectedMaterial: e.target.value }); }} />
+          <InfoButton onClick={() => setIsModalOpen(true)}><InfoIcon /></InfoButton>
         </div>
 
         {!['SLA', 'SLS', 'DLP', 'MJF'].includes(selectedTechnology) && (
           <>
-            <Dropdown label="Layer Thickness" options={layerThicknessOptions} value={layerThickness} onChange={handleLayerThicknessChange} />
+            <Dropdown label="Layer Thickness" options={layerThicknessOptions} value={layerThickness} onChange={e => { setLayerThickness(e.target.value); onCustomizationChange({ ...customizationDetails, layerThickness: e.target.value }); }} />
             <Dropdown label="Printer" options={printerOptions} value={selectedPrinterOption} disabled />
-            <Slider label="Infill" min={1} max={100} defaultValue={filling} onValueChange={setFilling} />
+            <Slider label="Infill" min={1} max={100} defaultValue={filling} onValueChange={val => { setFilling(val); onCustomizationChange({ ...customizationDetails, filling: val }); }} />
           </>
         )}
 
-        <Label>Color and Finishes</Label>
-        <ColorFinishDropdown options={colorOptionsState} value={colorFinish} onChange={handleColorFinishChange} />
+        <Label>Color & Finish</Label>
+        <ColorFinishDropdown options={colorOptionsState} value={colorFinish} onChange={e => { setColorFinish(e.target.value); onCustomizationChange({ ...customizationDetails, colorFinish: e.target.value }); }} />
       </DropdownContainer>
 
       <ButtonContainer>
-        <NextButton onClick={handleNextButtonClick} disabled={isLoading}>
-          {isLoading ? <Spinner /> : "NEXT →"}
+        <NextButton disabled={isLoading} onClick={handleNextButtonClick}>
+          {isLoading ? <Spinner /> : 'NEXT →'}
         </NextButton>
       </ButtonContainer>
     </div>
   );
 };
 
-// Export default React component for Next.js
-const CustomizationPage = () => {
-  const initialDetails: CustomizationDetails = {
+// === Page Export ===
+
+const CustomizationPage: React.FC = () => {
+  const initial: CustomizationDetails = {
     selectedTechnology: 'FDM',
     selectedMaterial: 'PLA',
     layerThickness: 'NORMAL',
@@ -353,111 +249,28 @@ const CustomizationPage = () => {
     scale: 100,
     selectedPrinterOption: 'STD',
   };
-
+  const [details, setDetails] = useState(initial);
   const [activeTab, setActiveTab] = useState('Customization');
-  const [furthestAccessibleTab, setFurthestAccessibleTab] = useState('Customization');
+  const [furthestTab, setFurthestTab] = useState('Customization');
+  const url = typeof window !== 'undefined' ? localStorage.getItem('modelFileUrl') : null;
 
   return (
     <CustomizeDetails
       setActiveTab={setActiveTab}
-      setFurthestAccessibleTab={setFurthestAccessibleTab}
-      customizationDetails={initialDetails}
-      onCustomizationChange={() => {}}
-      fileUrl={typeof window !== 'undefined' ? localStorage.getItem('modelFileUrl') : null}
+      setFurthestAccessibleTab={setFurthestTab}
+      customizationDetails={details}
+      onCustomizationChange={setDetails}
+      fileUrl={url}
     />
   );
 };
 
 export default CustomizationPage;
 
-// Extra styles
-const Heading = styled.h1`
-  font-size: 3.5rem;
-  font-weight: bold;
-  font-family: 'Poppins', sans-serif;
-  color: #fff;
-  margin-bottom: 0.5em;
+// === Styled Components ===
+
+const DropdownContainer = styled.div`
+  display: flex; flex-direction: column; gap: 10px; max-width: 600px;
 `;
-
-const SubText = styled.p`
-  font-size: 1.5rem;
-  font-family: 'Poppins', sans-serif;
-  color: #fff;
-  opacity: 0.7;
-  margin-bottom: 20px;
-`;
-
-const PercentageSymbol = styled.span`
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-left: 5px;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-`;
-
-const NextButton = styled.button`
-  height: 50px;
-  min-width: 120px;
-  background-color: #FED700;
-  color: #0A121E;
-  font-weight: bold;
-  font-size: 1.6rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  padding: 0 2rem;
-
-  &:hover {
-    background-color: #E0A800;
-  }
-
-  &:disabled {
-    background-color: #E0A800;
-    cursor: default;
-  }
-`;
-
-const Spinner = styled.div`
-  border: 2px solid transparent;
-  border-top: 2px solid #ffffff;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  animation: spin 1s linear infinite;
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-`;
-
-const SliderContainer = styled.div`
-  input[type="range"] {
-    appearance: none;
-    width: 100%;
-    height: 22px;
-    border-radius: 15px;
-    cursor: pointer;
-
-    &::-webkit-slider-thumb {
-      appearance: none;
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      background: #fed700;
-      cursor: pointer;
-    }
-
-    &::-moz-range-thumb {
-      width: 25px;
-      height: 25px;
-      border-radius: 50%;
-      background: #fed700;
-      cursor: pointer;
-    }
-  }
-`;
+const Label = styled.label` font-size: 1.8rem; font-weight: bold; color: #fff; `;
+// ... rest of your styled components (Select, SliderContainer, etc.) continue below exactly as before...
