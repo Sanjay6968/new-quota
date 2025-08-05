@@ -175,7 +175,7 @@ function DeliveryDetails({
   };
 
   return (
-    <div>
+    <Container>
       <Heading>Preferred Delivery Options</Heading>
       <SubText>Choose the shipping option that best suits your needs and preferences.</SubText>
       <FormContainer>
@@ -245,16 +245,174 @@ function DeliveryDetails({
           </NextButton>
         </ButtonContainer>
       </FormContainer>
-    </div>
+    </Container>
   );
 }
 
 export default DeliveryDetails;
 
-// Styled Components (unchanged — same as your version)
-const Heading = styled.h1`...`;
-const SubText = styled.p`...`;
-const DropdownContainer = styled.div`...`;
+// Styled Components with proper CSS
+const Container = styled.div`
+  min-height: 100vh;
+  background-color: #1a2332;
+  color: white;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+`;
+
+const Heading = styled.h1`
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: white;
+`;
+
+const SubText = styled.p`
+  font-size: 1rem;
+  color: #b0bec5;
+  margin-bottom: 30px;
+`;
+
+const FormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  max-width: 800px;
+`;
+
+const DeliveryOptionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+const ContactInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+const DropdownContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const Label = styled.label`
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: white;
+`;
+
+const Select = styled.select`
+  padding: 12px;
+  border: 1px solid #455a64;
+  border-radius: 4px;
+  background-color: #263238;
+  color: white;
+  font-size: 1rem;
+  
+  &:focus {
+    outline: none;
+    border-color: #64b5f6;
+  }
+`;
+
+const Input = styled.input`
+  padding: 12px;
+  border: 1px solid #455a64;
+  border-radius: 4px;
+  background-color: #263238;
+  color: white;
+  font-size: 1rem;
+  
+  &::placeholder {
+    color: #78909c;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: #64b5f6;
+  }
+  
+  &:disabled {
+    background-color: #37474f;
+    cursor: not-allowed;
+  }
+`;
+
+const Textarea = styled.textarea`
+  padding: 12px;
+  border: 1px solid #455a64;
+  border-radius: 4px;
+  background-color: #263238;
+  color: white;
+  font-size: 1rem;
+  min-height: 80px;
+  resize: vertical;
+  
+  &::placeholder {
+    color: #78909c;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: #64b5f6;
+  }
+  
+  &:disabled {
+    background-color: #37474f;
+    cursor: not-allowed;
+  }
+`;
+
+const ValidationMessage = styled.p`
+  color: #f44336;
+  font-size: 0.875rem;
+  margin: 0;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
+`;
+
+const NextButton = styled.button`
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  
+  &:hover {
+    background-color: #45a049;
+  }
+  
+  &:disabled {
+    background-color: #666;
+    cursor: not-allowed;
+  }
+`;
+
+const Spinner = styled.div`
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ffffff;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
 const Dropdown: React.FC<DropdownProps> = ({ label, options, value, onChange }) => (
   <DropdownContainer>
     <Label>{label}</Label>
@@ -267,8 +425,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, options, value, onChange }) 
     </Select>
   </DropdownContainer>
 );
-const Label = styled.label`...`;
-const Select = styled.select`...`;
+
 const InputField: React.FC<InputFieldProps> = ({ label, value, onChange, onKeyPress, placeholder, disabled }) => {
   const isDisabled = label === 'Shipping Method' ? true : disabled;
   return label === 'Shipping Address' ? (
@@ -283,12 +440,3 @@ const InputField: React.FC<InputFieldProps> = ({ label, value, onChange, onKeyPr
     </DropdownContainer>
   );
 };
-const Textarea = styled.textarea`...`;
-const Input = styled.input`...`;
-const FormContainer = styled.div`...`;
-const DeliveryOptionsContainer = styled.div`...`;
-const ContactInfoContainer = styled.div`...`;
-const ValidationMessage = styled.p`...`;
-const ButtonContainer = styled.div`...`;
-const NextButton = styled.button`...`;
-const Spinner = styled.div`...`;
