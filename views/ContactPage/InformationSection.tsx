@@ -1,7 +1,4 @@
-// views/ContactPage/InformationSection.tsx
-import React from 'react';
-import styled from 'styled-components';
-import { media } from '@/utils/media';
+
 
 export default function InformationSection() {
   return (
