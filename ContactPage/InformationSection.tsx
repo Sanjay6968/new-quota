@@ -80,4 +80,5 @@ const BusinessHours = styled.div`
     color: rgba(var(--text), 0.8);
     margin: 0.5rem 0;
   }
-  ;
+  
+`;
