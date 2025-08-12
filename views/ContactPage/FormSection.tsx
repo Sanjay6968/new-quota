@@ -1,4 +1,92 @@
-import { useState } from 'react';
+// views/ContactPage/InformationSection.tsx
+import React from 'react';
+import styled from 'styled-components';
+import { media } from '@/utils/media';
+
+export default function InformationSection() {
+  return (
+    <Wrapper>
+      <h3>Contact Info</h3>
+      <ContactDetails>
+        <ContactItem>
+          <Label>Email:</Label> contactus@mekuva.com
+        </ContactItem>
+        <ContactItem>
+          <Label>Phone:</Label> (+91) 8686700666
+        </ContactItem>
+        <ContactItem>
+          <Label>Address:</Label> Your Business Address Here
+        </ContactItem>
+      </ContactDetails>
+      
+      <BusinessHours>
+        <h4>Business Hours</h4>
+        <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
+        <p>Saturday: 10:00 AM - 4:00 PM</p>
+        <p>Sunday: Closed</p>
+      </BusinessHours>
+    </Wrapper>
+  );
+}
+
+const Wrapper = styled.div`
+  flex: 1;
+  margin-right: 3rem;
+  margin-bottom: 3rem;
+
+  ${media('<=tablet')} {
+    margin-right: 0;
+    margin-bottom: 2rem;
+  }
+
+  h3 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: rgba(var(--text), 1);
+  }
+
+  h4 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: rgba(var(--text), 1);
+  }
+`;
+
+const ContactDetails = styled.div`
+  margin-bottom: 3rem;
+`;
+
+const ContactItem = styled.p`
+  font-weight: normal;
+  font-size: 1.6rem;
+  color: rgba(var(--text), 0.7);
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+`;
+
+const Label = styled.span`
+  opacity: 1;
+  color: rgba(var(--text), 1);
+  font-weight: 600;
+`;
+
+const BusinessHours = styled.div`
+  padding: 2rem;
+  background: rgba(var(--text), 0.05);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary);
+
+  p {
+    font-size: 1.4rem;
+    color: rgba(var(--text), 0.8);
+    margin: 0.5rem 0;
+  }
+`;
+
+// ---
+
+// views/ContactPage/FormSection.tsx
+import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import styled from 'styled-components';
 import Button from '@/components/Button';
@@ -20,8 +108,11 @@ export default function FormSection() {
 
   const onSubmit: SubmitHandler<EmailPayload> = async (payload) => {
     try {
-      // Create a mailto link using the email payload
-      const mailtoLink = `mailto:${payload.email}?subject=Email%20from%20contact%20form&body=${encodeURIComponent(payload.description)}`;
+      // Create a properly formatted mailto link
+      const subject = `Contact Form - ${payload.name}`;
+      const body = `Name: ${payload.name}\nEmail: ${payload.email}\n\nMessage:\n${payload.description}`;
+      
+      const mailtoLink = `mailto:contactus@mekuva.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       
       // Open the user's default email client with the mailto link
       window.location.href = mailtoLink;
@@ -44,6 +135,7 @@ export default function FormSection() {
 
   return (
     <Wrapper>
+      <FormTitle>Send us a Message</FormTitle>
       <Form onSubmit={handleSubmit(onSubmit)}>
         {hasErrored && <ErrorMessage>Couldn't send email. Please try again.</ErrorMessage>}
         <InputGroup>
@@ -53,11 +145,23 @@ export default function FormSection() {
           </InputStack>
           <InputStack>
             {errors.email && <ErrorMessage>Email is required</ErrorMessage>}
-            <Input placeholder="Your Email" id="email" disabled={isDisabled} {...register('email', { required: true })} />
+            <Input 
+              placeholder="Your Email" 
+              id="email" 
+              type="email"
+              disabled={isDisabled} 
+              {...register('email', { 
+                required: 'Email is required',
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: 'Please enter a valid email address'
+                }
+              })} 
+            />
           </InputStack>
         </InputGroup>
         <InputStack>
-          {errors.description && <ErrorMessage>Description is required</ErrorMessage>}
+          {errors.description && <ErrorMessage>Message is required</ErrorMessage>}
           <Textarea
             as="textarea"
             placeholder="Enter Your Message..."
@@ -67,7 +171,7 @@ export default function FormSection() {
           />
         </InputStack>
         <Button as="button" type="submit" disabled={isSubmitDisabled}>
-          Send Message
+          {isSubmitting ? 'Sending...' : 'Send Message'}
         </Button>
       </Form>
     </Wrapper>
@@ -78,6 +182,12 @@ const Wrapper = styled.div`
   flex: 2;
 `;
 
+const FormTitle = styled.h3`
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: rgba(var(--text), 1);
+`;
+
 const Form = styled.form`
   & > * {
     margin-bottom: 2rem;
@@ -86,11 +196,8 @@ const Form = styled.form`
 
 const InputGroup = styled.div`
   display: flex;
-  align-items: center;
-
-  & > *:first-child {
-    margin-right: 2rem;
-  }
+  align-items: flex-start;
+  gap: 2rem;
 
   & > * {
     flex: 1;
@@ -98,8 +205,9 @@ const InputGroup = styled.div`
 
   ${media('<=tablet')} {
     flex-direction: column;
-    & > *:first-child {
-      margin-right: 0rem;
+    gap: 0;
+    
+    & > * {
       margin-bottom: 2rem;
     }
   }
@@ -116,10 +224,15 @@ const InputStack = styled.div`
 
 const ErrorMessage = styled.p`
   color: rgb(var(--errorColor));
-  font-size: 1.5rem;
+  font-size: 1.4rem;
+  margin: 0;
+  font-weight: 500;
 `;
 
 const Textarea = styled(Input)`
   width: 100%;
-  min-height: 20rem;
+  min-height: 15rem;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
 `;
