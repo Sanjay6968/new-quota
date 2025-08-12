@@ -33,11 +33,9 @@ const Title = styled.h1`
 const Content = styled.div`
   display: flex;
   gap: 4rem;
-
+  
   ${media('<=tablet')} {
     flex-direction: column;
     gap: 2rem;
   }
 `;
-
-// ---
