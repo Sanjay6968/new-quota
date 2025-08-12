@@ -33,18 +33,18 @@ const Wrapper = styled.div`
   flex: 1;
   margin-right: 3rem;
   margin-bottom: 3rem;
-
+  
   ${media('<=tablet')} {
     margin-right: 0;
     margin-bottom: 2rem;
   }
-
+  
   h3 {
     font-size: 2.5rem;
     margin-bottom: 2rem;
     color: rgba(var(--text), 1);
   }
-
+  
   h4 {
     font-size: 2rem;
     margin-bottom: 1rem;
@@ -75,7 +75,7 @@ const BusinessHours = styled.div`
   background: rgba(var(--text), 0.05);
   border-radius: 8px;
   border-left: 4px solid var(--primary);
-
+  
   p {
     font-size: 1.4rem;
     color: rgba(var(--text), 0.8);
